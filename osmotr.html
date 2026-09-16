@@ -1,0 +1,1463 @@
+<title>Осмотр</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7F6;
+    --surface:#FFFFFF;
+    --surface-2:#ECF1EE;
+    --ink:#161F1C;
+    --ink-muted:#5B6864;
+    --ink-faint:#8B968F;
+    --border:#DEE4E0;
+    --accent:#215F54;
+    --accent-strong:#194A41;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#DEEEE9;
+    --good:#2E7D4F;
+    --good-soft:#E3F2E8;
+    --mid:#9C6E10;
+    --mid-soft:#F6EAD3;
+    --low:#AE3F2F;
+    --low-soft:#F7E2DD;
+    --shadow:0 1px 2px rgba(22,31,28,.06), 0 8px 24px -10px rgba(22,31,28,.16);
+    --radius:12px;
+    --radius-sm:8px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#101512;
+      --surface:#161D19;
+      --surface-2:#1C2420;
+      --ink:#E7ECE9;
+      --ink-muted:#96A39D;
+      --ink-faint:#6C7873;
+      --border:#28322D;
+      --accent:#5EC0A8;
+      --accent-strong:#7ED3BC;
+      --accent-ink:#0A1512;
+      --accent-soft:#1B322B;
+      --good:#4DAE76;
+      --good-soft:#17301F;
+      --mid:#D2A23D;
+      --mid-soft:#312812;
+      --low:#E08069;
+      --low-soft:#391F17;
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 28px -10px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#101512;
+    --surface:#161D19;
+    --surface-2:#1C2420;
+    --ink:#E7ECE9;
+    --ink-muted:#96A39D;
+    --ink-faint:#6C7873;
+    --border:#28322D;
+    --accent:#5EC0A8;
+    --accent-strong:#7ED3BC;
+    --accent-ink:#0A1512;
+    --accent-soft:#1B322B;
+    --good:#4DAE76;
+    --good-soft:#17301F;
+    --mid:#D2A23D;
+    --mid-soft:#312812;
+    --low:#E08069;
+    --low-soft:#391F17;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 28px -10px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif; font-size:14px; line-height:1.5;}
+  h1,h2,h3,h4{font-family:'Manrope',system-ui,sans-serif; margin:0; text-wrap:balance;}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums;}
+  button{font:inherit; cursor:pointer;}
+  input,select,textarea{font:inherit; color:inherit;}
+  a{color:var(--accent);}
+
+  .app{display:flex; min-height:100vh;}
+
+  .sidebar{
+    width:236px; flex-shrink:0; background:var(--surface-2); border-right:1px solid var(--border);
+    padding:20px 14px; display:flex; flex-direction:column; gap:22px;
+    position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
+  }
+  .brand{display:flex; align-items:center; gap:10px; padding:2px 6px;}
+  .brand .mark{width:34px; height:34px; border-radius:9px; background:var(--accent); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-family:'Manrope'; font-weight:800; font-size:15px; flex-shrink:0;}
+  .brand .name{font-family:'Manrope'; font-weight:800; font-size:18px; letter-spacing:.2px;}
+  .brand .sub{font-size:11px; color:var(--ink-muted); margin-top:1px;}
+
+  .nav{display:flex; flex-direction:column; gap:3px;}
+  .nav button{
+    display:flex; align-items:center; gap:10px; text-align:left; background:transparent; border:none;
+    padding:10px 11px; border-radius:var(--radius-sm); color:var(--ink-muted); font-weight:500; font-size:13.5px;
+  }
+  .nav button .ic{width:18px; text-align:center; flex-shrink:0; opacity:.85;}
+  .nav button:hover{background:var(--surface); color:var(--ink);}
+  .nav button.active{background:var(--accent); color:var(--accent-ink); font-weight:600;}
+
+  .sidebar-foot{margin-top:auto; font-size:11px; color:var(--ink-faint); padding:0 6px; line-height:1.5;}
+
+  .main{flex:1; min-width:0; padding:28px 34px 70px;}
+  .page-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px;}
+  .page-head h1{font-size:23px; font-weight:700;}
+  .page-head .desc{color:var(--ink-muted); font-size:13px; margin-top:4px;}
+  .page-head-controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);}
+  .panel{padding:20px 22px;}
+  .panel + .panel{margin-top:16px;}
+  .section-title{font-family:'Manrope'; font-weight:700; font-size:14.5px; display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .section-title .idx{width:22px; height:22px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-size:11.5px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono'; flex-shrink:0;}
+
+  label.field, div.field{display:flex; flex-direction:column; gap:6px; font-size:12.5px; color:var(--ink-muted); font-weight:500;}
+  label.field .req{color:var(--low);}
+  .field input[type=text], .field input[type=date], .field select, .field textarea{
+    background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:9px 10px; color:var(--ink); font-size:13.5px; width:100%;
+  }
+  .field textarea{resize:vertical; min-height:64px; line-height:1.5; font-family:inherit;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--accent); outline-offset:-1px;}
+
+  .grid2{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media (max-width:760px){ .grid2,.grid3{grid-template-columns:1fr;} }
+
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-weight:600; font-size:13px; white-space:nowrap;}
+  .btn:hover{border-color:var(--ink-faint);}
+  .btn:disabled{opacity:.5; cursor:default;}
+  .btn-primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .btn-primary:hover{background:var(--accent-strong); border-color:var(--accent-strong);}
+  .btn-ghost{background:transparent; border-color:transparent; color:var(--ink-muted); padding:8px 10px;}
+  .btn-ghost:hover{background:var(--surface-2); color:var(--ink);}
+  .btn-danger{color:var(--low); border-color:var(--low-soft); background:var(--low-soft);}
+  .btn-danger:hover{border-color:var(--low);}
+  .btn-sm{padding:6px 12px; font-size:12px;}
+
+  .criterion{border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; background:var(--bg);}
+  .criterion + .criterion{margin-top:10px;}
+  .criterion .crit-head{display:flex; justify-content:space-between; gap:10px; margin-bottom:6px;}
+  .criterion .crit-label{font-weight:600; font-size:13.5px;}
+  .criterion .crit-hint{font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+  .badge{display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:999px; font-size:11.5px; font-weight:600; font-family:'IBM Plex Mono';}
+  .badge-good{background:var(--good-soft); color:var(--good);}
+  .badge-mid{background:var(--mid-soft); color:var(--mid);}
+  .badge-low{background:var(--low-soft); color:var(--low);}
+  .badge-na{background:var(--surface-2); color:var(--ink-faint);}
+
+  .score-row{display:flex; align-items:center; gap:10px; margin:8px 0;}
+  .score-row select{width:150px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 8px;}
+  .ai-tag{font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-faint); font-weight:600;}
+  .comment-box{width:100%; min-height:52px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 9px; font-size:13px; line-height:1.45; resize:vertical;}
+  .ai-source{background:var(--surface-2); border-radius:var(--radius-sm); padding:8px 10px; font-size:12px; color:var(--ink-muted); margin-top:8px; display:none;}
+  .ai-source.show{display:block;}
+
+  .total-strip{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; background:var(--accent-soft); border-radius:var(--radius-sm); margin-top:16px; flex-wrap:wrap;}
+  .total-strip .label{font-size:12.5px; color:var(--ink-muted); font-weight:500;}
+  .total-strip .value{font-family:'IBM Plex Mono'; font-weight:600; font-size:26px; color:var(--accent-strong);}
+
+  .banner{display:flex; gap:10px; align-items:flex-start; padding:11px 14px; border-radius:var(--radius-sm); font-size:12.5px; margin-bottom:14px;}
+  .banner-warn{background:var(--mid-soft); color:var(--mid);}
+  .banner-info{background:var(--accent-soft); color:var(--accent-strong);}
+  .banner-error{background:var(--low-soft); color:var(--low);}
+
+  .spinner{width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.4); border-top-color:currentColor; animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){ .spinner{animation-duration:1.6s;} }
+
+  .filters-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+  .filters-bar input, .filters-bar select{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 10px; font-size:13px;}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  thead th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--ink-faint); font-weight:600; padding:0 12px 8px; border-bottom:1px solid var(--border);}
+  tbody td{padding:11px 12px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.row-click{cursor:pointer;}
+  tbody tr.row-click:hover{background:var(--surface-2);}
+  .table-wrap{overflow-x:auto;}
+  .example-chip{font-size:10px; color:var(--ink-faint); background:var(--surface-2); padding:1px 7px; border-radius:999px; margin-left:8px; font-weight:600;}
+
+  .kpi-row{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px;}
+  @media (max-width:760px){ .kpi-row{grid-template-columns:1fr;} }
+  .kpi{padding:16px 18px;}
+  .kpi .kpi-label{font-size:12px; color:var(--ink-muted); font-weight:500;}
+  .kpi .kpi-value{font-family:'IBM Plex Mono'; font-weight:600; font-size:28px; margin-top:6px;}
+  .kpi .kpi-sub{font-size:11.5px; color:var(--ink-faint); margin-top:3px;}
+
+  .bars{display:flex; flex-direction:column; gap:10px;}
+  .bar-row{display:grid; grid-template-columns:160px 1fr 40px; align-items:center; gap:10px;}
+  @media (max-width:600px){ .bar-row{grid-template-columns:110px 1fr 34px; font-size:12px;} }
+  .bar-row .bar-label{font-size:12.5px; color:var(--ink-muted);}
+  .bar-track{height:10px; background:var(--surface-2); border-radius:999px; position:relative; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:999px; background:var(--accent);}
+  .bar-row .bar-val{font-family:'IBM Plex Mono'; font-size:12.5px; text-align:right;}
+  .bar-scale{display:grid; grid-template-columns:160px 1fr 40px; gap:10px; margin-bottom:4px;}
+  @media (max-width:600px){ .bar-scale{grid-template-columns:110px 1fr 34px;} }
+  .bar-scale-ticks{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-faint); font-family:'IBM Plex Mono';}
+
+  .modal-overlay{position:fixed; inset:0; background:rgba(10,14,12,.45); display:flex; align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto; z-index:50;}
+  .modal{width:100%; max-width:660px; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:40px;}
+  .modal-head{display:flex; justify-content:space-between; align-items:flex-start; padding:18px 22px; border-bottom:1px solid var(--border); gap:12px;}
+  .modal-body{padding:20px 22px;}
+  .modal-close{background:var(--surface-2); border:none; border-radius:50%; width:28px; height:28px; flex-shrink:0; color:var(--ink-muted); font-size:15px;}
+
+  .toast-wrap{position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:80;}
+  .toast{background:var(--ink); color:var(--bg); padding:11px 16px; border-radius:var(--radius-sm); font-size:13px; box-shadow:var(--shadow); max-width:320px;}
+  :root:not([data-theme="light"]) .toast{background:var(--surface); color:var(--ink); border:1px solid var(--border);}
+  :root[data-theme="dark"] .toast{background:var(--surface); color:var(--ink); border:1px solid var(--border);}
+
+  .attach-list{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+  .attach-chip{display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm); padding:6px 8px; font-size:12px; max-width:220px;}
+  .attach-thumb{width:34px; height:34px; border-radius:6px; object-fit:cover; flex-shrink:0; border:1px solid var(--border); background:var(--surface-2);}
+  .attach-icon{width:34px; height:34px; border-radius:6px; flex-shrink:0; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .attach-meta{min-width:0;}
+  .attach-name{font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;}
+  .attach-size{color:var(--ink-faint); font-size:11px;}
+  .attach-remove{background:none; border:none; color:var(--ink-faint); font-size:15px; padding:2px 4px; flex-shrink:0;}
+  .attach-remove:hover{color:var(--low);}
+  .attach-view{display:block; text-decoration:none; color:inherit;}
+
+  .empty-state{text-align:center; padding:44px 20px; color:var(--ink-faint);}
+  .empty-state .big{font-size:26px; margin-bottom:6px;}
+
+  .rec-list{display:flex; flex-direction:column; gap:6px;}
+  .rec-item{border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; cursor:pointer;}
+  .rec-item:hover{background:var(--surface-2);}
+  .rec-item .rec-head{display:flex; justify-content:space-between; gap:10px; font-weight:600; font-size:13px;}
+  .rec-item .rec-meta{font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+  .rec-detail{margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:13px; display:none;}
+  .rec-detail.show{display:block;}
+  .rec-detail h4{font-size:12px; text-transform:uppercase; letter-spacing:.3px; color:var(--ink-muted); margin:12px 0 6px;}
+  .rec-detail h4:first-child{margin-top:0;}
+  .rec-detail ul{margin:0; padding-left:18px;}
+  .rec-detail li{margin-bottom:4px;}
+  .doctor-note{border-left:2px solid var(--accent); padding-left:10px; margin-bottom:8px;}
+  .doctor-note b{font-size:12.5px;}
+
+  [hidden]{display:none !important;}
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">Ос</div>
+      <div>
+        <div class="name">Осмотр</div>
+        <div class="sub">Внутренняя экспертиза приёма</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-view="new"><span class="ic">&#128221;</span>Новая экспертиза</button>
+      <button data-view="journal"><span class="ic">&#128194;</span>Журнал экспертиз</button>
+      <button data-view="analytics"><span class="ic">&#128202;</span>Аналитика</button>
+      <button data-view="recommendations"><span class="ic">&#128161;</span>Рекомендации</button>
+    </nav>
+    <div class="sidebar-foot">
+      ИИ формирует предварительную оценку. Итоговое заключение и ответственность — за экспертом.
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="view-new"></section>
+    <section id="view-journal" hidden></section>
+    <section id="view-analytics" hidden></section>
+    <section id="view-recommendations" hidden></section>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+  if(window.pdfjsLib){
+    try{ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }catch(e){}
+  }
+  var pdfjsReady = !!window.pdfjsLib;
+
+  var CRITERIA = [
+    {key:'anamnesis', label:'Анамнез', hint:'Полнота и последовательность сбора анамнеза заболевания и жизни', standard:false},
+    {key:'exam', label:'Объективный осмотр', hint:'Данные объективного осмотра — в документации может называться «Текущий статус» или «Status praesens». Применимо только для очных консультаций.', standard:false},
+    {key:'diagnosis', label:'Диагноз и код МКБ-10', hint:'Формулировка клинического диагноза (основной, сопутствующий) и соответствие кода(ов) МКБ-10 диагнозу — вносите вместе, одним текстом, как в медицинской документации', standard:false},
+    {key:'diagnosticsVolume', label:'Объём диагностики', hint:'Соответствие объёма обследования принятым стандартам', standard:true},
+    {key:'treatmentVolume', label:'Объём лечения', hint:'Соответствие объёма и состава лечения принятым стандартам', standard:true},
+    {key:'doctorRecommendations', label:'Рекомендации врача', hint:'Обоснованность и полнота рекомендаций, данных пациенту', standard:false}
+  ];
+  var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  var LOW_THRESHOLD = 3;
+  var PROBLEM_AVG_THRESHOLD = 4;
+  var holderId = 'v-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function nowIso(){ return new Date().toISOString(); }
+  function monthKey(iso){ return (iso||'').slice(0,7); }
+  function monthLabel(key){
+    if(!key) return '';
+    var parts = key.split('-'); var y = parts[0], m = parseInt(parts[1],10);
+    return MONTHS_RU[m-1] + ' ' + y;
+  }
+  function currentMonthKey(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1); }
+  function fmtDate(iso){
+    if(!iso) return '—';
+    var d = new Date(iso);
+    return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+  }
+  function fmtDateTime(iso){
+    if(!iso) return '—';
+    var d = new Date(iso);
+    return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+  }
+  function scoreClass(score){
+    if(score == null) return 'badge-na';
+    if(score >= 4) return 'badge-good';
+    if(score === 3) return 'badge-mid';
+    return 'badge-low';
+  }
+  function round1(n){ return Math.round(n*10)/10; }
+  function clampScore(v){
+    var n = Number(v);
+    if(!isFinite(n)) return 3;
+    n = Math.round(n);
+    if(n < 1) n = 1; if(n > 5) n = 5;
+    return n;
+  }
+  function avg(arr){
+    if(!arr.length) return null;
+    var s = 0; for(var i=0;i<arr.length;i++) s += arr[i];
+    return s/arr.length;
+  }
+
+  // ---------- state ----------
+  var state = {
+    db: null,
+    sample: null,
+    assets: null,
+    dbReady: false,
+    sampleReady: false,
+    assetsReady: false,
+    expertises: [],
+    recommendations: [],
+    localFallback: false,
+    view: 'new'
+  };
+
+  var draft = freshDraft();
+  function freshDraft(){
+    var name = '';
+    try{ name = localStorage.getItem('osmotr_expert_name') || ''; }catch(e){}
+    var inputs = {};
+    CRITERIA.forEach(function(c){ inputs[c.key] = ''; });
+    return {
+      expertName: name, doctor:'', department:'', visitDate:'', consultationType:'in_person', patientId:'',
+      standardText:'', inputs: inputs, ai: null, final: null, aiStatus:'idle', aiError:'', attachments: []
+    };
+  }
+  function blobUrl(id){ return '/_blob/' + id; }
+  function fmtBytes(n){
+    if(n == null) return '';
+    if(n < 1024) return n + ' Б';
+    if(n < 1024*1024) return Math.round(n/1024) + ' КБ';
+    return (n/1024/1024).toFixed(1) + ' МБ';
+  }
+  var ATTACH_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,application/pdf';
+
+  // ---------- toast ----------
+  function toast(msg, kind){
+    var wrap = document.getElementById('toast-wrap');
+    var el = document.createElement('div');
+    el.className = 'toast';
+    if(kind === 'error') el.style.color = 'var(--low)';
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 4200);
+  }
+
+  // ---------- nav ----------
+  document.getElementById('nav').addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-view]');
+    if(!btn) return;
+    setView(btn.getAttribute('data-view'));
+  });
+  function setView(v){
+    state.view = v;
+    ['new','journal','analytics','recommendations'].forEach(function(name){
+      document.getElementById('view-'+name).hidden = (name !== v);
+    });
+    var buttons = document.querySelectorAll('#nav button');
+    buttons.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view') === v); });
+    if(v === 'new') renderNewView();
+    if(v === 'journal') renderJournalView();
+    if(v === 'analytics') renderAnalyticsView();
+    if(v === 'recommendations') renderRecommendationsView();
+  }
+
+  // ================= NEW EXPERTISE VIEW =================
+  function renderNewView(){
+    var el = document.getElementById('view-new');
+    el.innerHTML =
+      '<div class="page-head"><div><h1>Новая экспертиза</h1>' +
+      '<div class="desc">Внесите данные приёма, запустите ИИ-оценку и утвердите итоговые баллы.</div></div></div>' +
+      (state.sampleReady ? '' : '<div class="banner banner-warn">ИИ-оценка недоступна в этом окне. Баллы и комментарии можно заполнить вручную.</div>') +
+      (state.dbReady ? '' : '<div class="banner banner-warn">Общее хранилище недоступно — экспертиза будет сохранена только в этой сессии.</div>') +
+      '<div class="card panel">' +
+        '<div class="section-title"><span class="idx">1</span>Данные приёма</div>' +
+        '<div class="grid3" style="margin-bottom:14px;">' +
+          field('text','f-doctor','Врач','required') +
+          field('text','f-department','Отделение / специальность') +
+          field('date','f-visitDate','Дата приёма') +
+        '</div>' +
+        '<div class="grid3">' +
+          '<label class="field">Тип консультации <span class="req">*</span>' +
+            '<select id="f-consultationType">' +
+              '<option value="in_person">Очная</option>' +
+              '<option value="remote">Дистанционная</option>' +
+            '</select>' +
+          '</label>' +
+          field('text','f-patientId','№ карты / ID пациента (без ФИО)') +
+          field('text','f-expertName','Эксперт (ваше имя)') +
+        '</div>' +
+      '</div>' +
+      '<div class="card panel">' +
+        '<div class="section-title">Документы приёма <span style="font-weight:400;color:var(--ink-faint);font-size:12px;">— фото, скан или PDF записи приёма / заключения врача (опционально)</span></div>' +
+        (state.assetsReady ?
+          '<input type="file" id="f-attach-input" accept="'+ATTACH_ACCEPT+'" multiple hidden>' +
+          '<button class="btn" id="btn-attach">Загрузить документ</button>' +
+          '<div style="font-size:11.5px;color:var(--ink-faint);margin-top:8px;">Изображения (фото/скан) передаются ИИ вместе с текстом при оценке приёма. PDF сохраняется как приложение к экспертизе.</div>' +
+          '<div class="attach-list" id="attach-list"></div>'
+        : '<div class="banner banner-warn" style="margin-bottom:0;">Загрузка документов недоступна в этом окне.</div>') +
+      '</div>' +
+      '<div class="card panel">' +
+        '<div class="section-title"><span class="idx">2</span>Содержание приёма по разделам</div>' +
+        CRITERIA.map(function(c,i){
+          return '<label class="field" style="margin-bottom:12px;">'+esc(c.label)+' <span style="font-weight:400;color:var(--ink-faint);">— '+esc(c.hint)+'</span>' +
+            '<textarea id="in-'+c.key+'" data-crit="'+c.key+'"></textarea></label>';
+        }).join('') +
+        '<div class="field">Стандарт для сверки объёма диагностики и лечения <span style="font-weight:400;color:var(--ink-faint);">— внутренние КР организации, протокол МЗ РК или выдержка из UpToDate (опционально)</span>' +
+          '<textarea id="f-standard" style="min-height:52px;"></textarea>' +
+          (pdfjsReady ?
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+              '<input type="file" id="f-standard-pdf" accept="application/pdf" hidden>' +
+              '<button type="button" class="btn btn-sm" id="btn-standard-pdf">Загрузить стандарт из PDF</button>' +
+              '<span id="standard-pdf-status" style="font-size:11.5px;color:var(--ink-faint);"></span>' +
+            '</div>'
+          : '<div style="font-size:11.5px;color:var(--ink-faint);">Загрузка PDF недоступна в этом окне — вставьте текст вручную.</div>') +
+        '</div>' +
+      '</div>' +
+      '<div class="card panel" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">' +
+        '<button class="btn btn-primary" id="btn-run-ai">Провести экспертизу с ИИ</button>' +
+        '<button class="btn btn-ghost" id="btn-manual">Заполнить баллы вручную</button>' +
+        '<span id="ai-status" style="font-size:12.5px; color:var(--ink-muted);"></span>' +
+      '</div>' +
+      '<div id="results-panel"></div>';
+
+    document.getElementById('f-consultationType').value = draft.consultationType;
+    document.getElementById('f-doctor').value = draft.doctor;
+    document.getElementById('f-department').value = draft.department;
+    document.getElementById('f-visitDate').value = draft.visitDate;
+    document.getElementById('f-patientId').value = draft.patientId;
+    document.getElementById('f-expertName').value = draft.expertName;
+    document.getElementById('f-standard').value = draft.standardText;
+    CRITERIA.forEach(function(c){ document.getElementById('in-'+c.key).value = draft.inputs[c.key]; });
+
+    document.getElementById('f-consultationType').addEventListener('change', function(e){
+      draft.consultationType = e.target.value;
+      if(draft.final){ applyExamApplicability(); renderResultsPanel(); }
+    });
+    document.getElementById('f-expertName').addEventListener('input', function(e){
+      draft.expertName = e.target.value;
+      try{ localStorage.setItem('osmotr_expert_name', draft.expertName); }catch(err){}
+    });
+
+    document.getElementById('btn-run-ai').addEventListener('click', runAiAssessment);
+    document.getElementById('btn-manual').addEventListener('click', function(){
+      collectFormIntoDraft();
+      if(!draft.doctor.trim()){ toast('Укажите врача', 'error'); return; }
+      buildManualFinal();
+      renderResultsPanel();
+    });
+
+    if(pdfjsReady){
+      var standardPdfInput = document.getElementById('f-standard-pdf');
+      document.getElementById('btn-standard-pdf').addEventListener('click', function(){ standardPdfInput.click(); });
+      standardPdfInput.addEventListener('change', function(e){
+        var file = e.target.files && e.target.files[0];
+        standardPdfInput.value = '';
+        if(file) extractStandardFromPdf(file);
+      });
+    }
+
+    if(state.assetsReady){
+      var attachInput = document.getElementById('f-attach-input');
+      document.getElementById('btn-attach').addEventListener('click', function(){ attachInput.click(); });
+      attachInput.addEventListener('change', function(e){
+        var files = Array.prototype.slice.call(e.target.files || []);
+        attachInput.value = '';
+        files.forEach(uploadAttachment);
+      });
+      renderAttachList();
+    }
+
+    if(draft.final){ renderResultsPanel(); }
+  }
+
+  function extractStandardFromPdf(file){
+    var statusEl = document.getElementById('standard-pdf-status');
+    var btn = document.getElementById('btn-standard-pdf');
+    btn.disabled = true;
+    statusEl.textContent = 'Извлекаю текст из «' + file.name + '»…';
+    file.arrayBuffer().then(function(buf){
+      return pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(function(pdf){
+      var pageNums = []; for(var i=1;i<=pdf.numPages;i++) pageNums.push(i);
+      var pagesText = [];
+      return pageNums.reduce(function(chain, n){
+        return chain.then(function(){
+          return pdf.getPage(n).then(function(page){
+            return page.getTextContent().then(function(tc){
+              pagesText[n-1] = tc.items.map(function(it){ return it.str; }).join(' ');
+            });
+          });
+        });
+      }, Promise.resolve()).then(function(){ return pagesText.join('\n\n'); });
+    }).then(function(text){
+      text = text.trim();
+      btn.disabled = false;
+      if(!text){
+        statusEl.textContent = '';
+        toast('В PDF не найден текстовый слой (похоже, это скан) — вставьте текст вручную.', 'error');
+        return;
+      }
+      var ta = document.getElementById('f-standard');
+      ta.value = ta.value ? (ta.value.replace(/\s+$/,'') + '\n\n' + text) : text;
+      draft.standardText = ta.value;
+      statusEl.textContent = 'Добавлено из «' + file.name + '» (' + pdfPagesLabel(text) + ')';
+    }).catch(function(err){
+      btn.disabled = false;
+      statusEl.textContent = '';
+      toast('Не удалось прочитать PDF. Проверьте файл или вставьте текст вручную.', 'error');
+    });
+  }
+  function pdfPagesLabel(text){
+    var chars = text.length;
+    return chars > 1000 ? Math.round(chars/1000) + ' тыс. симв.' : chars + ' симв.';
+  }
+
+  function uploadAttachment(file){
+    var placeholder = { id: null, uploading: true, filename: file.name, sizeBytes: file.size, contentType: file.type };
+    draft.attachments.push(placeholder);
+    renderAttachList();
+    state.assets.upload(file).then(function(res){
+      placeholder.id = res.id; placeholder.sizeBytes = res.sizeBytes; placeholder.contentType = res.contentType;
+      placeholder.uploading = false; placeholder.file = file;
+      renderAttachList();
+    }).catch(function(e){
+      draft.attachments = draft.attachments.filter(function(a){ return a !== placeholder; });
+      var msg = 'Не удалось загрузить файл.';
+      if(e && e.code === 'too_large') msg = 'Файл слишком большой.';
+      if(e && e.code === 'unsupported_type') msg = 'Формат файла не поддерживается.';
+      toast(msg, 'error');
+      renderAttachList();
+    });
+  }
+
+  function removeAttachment(a){
+    draft.attachments = draft.attachments.filter(function(x){ return x !== a; });
+    renderAttachList();
+    if(a.id && state.assetsReady){ state.assets.delete(a.id).catch(function(){}); }
+  }
+
+  function renderAttachList(){
+    var host = document.getElementById('attach-list');
+    if(!host) return;
+    host.innerHTML = draft.attachments.map(function(a, i){
+      var isImage = a.contentType && a.contentType.indexOf('image/') === 0;
+      var thumb = a.uploading ? '<div class="attach-icon">&#8987;</div>' :
+        (isImage ? '<img class="attach-thumb" src="'+blobUrl(a.id)+'">' : '<div class="attach-icon">&#128196;</div>');
+      return '<div class="attach-chip">' + thumb +
+        '<div class="attach-meta"><div class="attach-name">'+esc(a.filename)+'</div>' +
+        '<div class="attach-size">'+(a.uploading ? 'Загрузка…' : fmtBytes(a.sizeBytes))+'</div></div>' +
+        '<button class="attach-remove" data-attach-idx="'+i+'" title="Удалить">&times;</button>' +
+      '</div>';
+    }).join('');
+    host.querySelectorAll('[data-attach-idx]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        removeAttachment(draft.attachments[Number(btn.getAttribute('data-attach-idx'))]);
+      });
+    });
+  }
+
+  function field(type, id, label, required){
+    return '<label class="field">'+esc(label)+(required?' <span class="req">*</span>':'')+
+      '<input type="'+type+'" id="'+id+'"></label>';
+  }
+
+  function collectFormIntoDraft(){
+    draft.doctor = document.getElementById('f-doctor').value.trim();
+    draft.department = document.getElementById('f-department').value.trim();
+    draft.visitDate = document.getElementById('f-visitDate').value;
+    draft.consultationType = document.getElementById('f-consultationType').value;
+    draft.patientId = document.getElementById('f-patientId').value.trim();
+    draft.standardText = document.getElementById('f-standard').value.trim();
+    CRITERIA.forEach(function(c){ draft.inputs[c.key] = document.getElementById('in-'+c.key).value.trim(); });
+  }
+
+  function buildManualFinal(){
+    var sections = {};
+    CRITERIA.forEach(function(c){
+      var applicable = !(c.key === 'exam' && draft.consultationType === 'remote');
+      sections[c.key] = { score: null, comment: '', correctApproach: '', applicable: applicable };
+    });
+    draft.final = { sections: sections, overall: '' };
+    draft.ai = null;
+    draft.aiStatus = 'manual';
+  }
+
+  function applyExamApplicability(){
+    if(!draft.final) return;
+    var applicable = draft.consultationType !== 'remote';
+    draft.final.sections.exam.applicable = applicable;
+    if(!applicable) draft.final.sections.exam.score = null;
+  }
+
+  function buildAiPrompt(imageCount){
+    var lines = [];
+    lines.push('Ты — ассистент внутреннего клинического аудита в медицинской организации. Твоя оценка вспомогательная: её проверит и утвердит эксперт-человек, который несёт ответственность за итоговое заключение. Не делай категоричных медицинских выводов о состоянии конкретного пациента — оценивай только полноту и соответствие оформления медицинской документации.');
+    if(imageCount > 0){
+      lines.push('К приёму приложено изображений (фото/скан документации приёма или заключения врача): ' + imageCount + '. Используй их как источник данных наравне с текстовыми полями ниже. Если данные на изображениях расходятся с текстовыми полями, укажи это расхождение в комментарии соответствующего раздела.');
+    }
+    lines.push('');
+    lines.push('ДАННЫЕ ПРИЁМА:');
+    lines.push('Врач: ' + (draft.doctor || '—'));
+    lines.push('Отделение: ' + (draft.department || '—'));
+    lines.push('Тип консультации: ' + (draft.consultationType === 'remote' ? 'дистанционная' : 'очная'));
+    lines.push('Дата приёма: ' + (draft.visitDate || '—'));
+    lines.push('');
+    lines.push('СОДЕРЖАНИЕ ПО РАЗДЕЛАМ:');
+    CRITERIA.forEach(function(c){
+      lines.push(c.label + ': ' + (draft.inputs[c.key] || '(не заполнено)'));
+    });
+    lines.push('');
+    lines.push('Раздел "Диагноз и код МКБ-10" включает и формулировку диагноза (основной, сопутствующий), и код(ы) МКБ-10 — оценивай их одним общим баллом: если диагноз сформулирован верно, но код ему не соответствует или не подтверждён данными осмотра, это основание снизить балл именно по этому разделу, а не повод писать, что диагноз отсутствует.');
+    lines.push('');
+    if(draft.standardText){
+      lines.push('СТАНДАРТ ДЛЯ СВЕРКИ (сверяй объём диагностики и лечения именно с этим стандартом):');
+      lines.push(draft.standardText);
+    } else {
+      lines.push('Стандарт для сверки не предоставлен — используй общепринятые клинические подходы для оценки объёма диагностики и лечения.');
+    }
+    lines.push('');
+    lines.push('ПРАВИЛО КАЛИБРОВКИ: если по разделу есть содержательное замечание или предложение (например, уточнить дозировку, добавить срок контрольного визита), но оно не является основанием считать документацию неполной или ошибочной, ставь 5 баллов и излагай замечание как необязательную рекомендацию в комментарии, поле correctApproach оставь пустым — не занижай балл за такие замечания.');
+    lines.push('Раздел "Объективный осмотр" отметь неприменимым (applicable: false, score: null), если консультация дистанционная.');
+    lines.push('Шкала по каждому разделу: 1 — грубые нарушения или полное отсутствие данных, 5 — полностью соответствует, замечаний по существу нет.');
+    lines.push('ВАЖНО: если балл по разделу ниже 5, заполни ДВА поля конкретно и по существу — врач должен понять, что не так и что делать: comment — конкретно, что именно не так в этом приёме и почему это основание для снижения балла (не общими словами); correctApproach — конкретно, как правильно нужно было оформить или сделать этот раздел (со ссылкой на предоставленный стандарт, если он есть, иначе на общепринятый клинический подход). Врач может быть не согласен с этой оценкой, поэтому формулировка должна быть проверяемой, а не оценочной.');
+    lines.push('Комментарий по разделу — 1-2 предложения, деловым доброжелательным тоном на русском языке. Общее заключение — 2-4 предложения.');
+    lines.push('');
+    lines.push('Ответь ТОЛЬКО JSON без каких-либо пояснений вокруг, строго в этой форме:');
+    lines.push('{"anamnesis":{"score":1-5,"comment":"...","correctApproach":"..."},"exam":{"score":1-5 или null,"applicable":true/false,"comment":"...","correctApproach":"..."},"diagnosis":{"score":1-5,"comment":"...","correctApproach":"..."},"diagnosticsVolume":{"score":1-5,"comment":"...","correctApproach":"..."},"treatmentVolume":{"score":1-5,"comment":"...","correctApproach":"..."},"doctorRecommendations":{"score":1-5,"comment":"...","correctApproach":"..."},"overall":"..."}');
+    return lines.join('\n');
+  }
+
+  function runAiAssessment(){
+    collectFormIntoDraft();
+    if(!draft.doctor){ toast('Укажите врача', 'error'); return; }
+    if(!state.sampleReady){
+      buildManualFinal();
+      renderResultsPanel();
+      return;
+    }
+    draft.aiStatus = 'loading';
+    var statusEl = document.getElementById('ai-status');
+    var btn = document.getElementById('btn-run-ai');
+    btn.disabled = true;
+    statusEl.innerHTML = '<span class="spinner" style="display:inline-block;vertical-align:-2px;"></span> ИИ формирует оценку — обычно до минуты…';
+
+    var imageFiles = draft.attachments.filter(function(a){
+      return !a.uploading && a.file && a.contentType && a.contentType.indexOf('image/') === 0;
+    }).map(function(a){ return a.file; });
+    var sampleOptions = { modelTier: 'default' };
+    if(imageFiles.length) sampleOptions.images = imageFiles;
+
+    state.sample.json(buildAiPrompt(imageFiles.length), sampleOptions).then(function(data){
+      var sections = {};
+      CRITERIA.forEach(function(c){
+        var raw = data && data[c.key] ? data[c.key] : {};
+        var applicable = c.key === 'exam' ? (draft.consultationType !== 'remote') : true;
+        var score = applicable ? clampScore(raw.score) : null;
+        sections[c.key] = { score: score, comment: (raw.comment || '').toString().trim(), correctApproach: (raw.correctApproach || '').toString().trim(), applicable: applicable };
+      });
+      draft.ai = { sections: sections, overall: (data && data.overall ? String(data.overall) : '').trim() };
+      draft.final = {
+        sections: JSON.parse(JSON.stringify(sections)),
+        overall: draft.ai.overall
+      };
+      draft.aiStatus = 'done';
+      statusEl.textContent = 'Готово. Проверьте и при необходимости скорректируйте оценки перед сохранением.';
+      btn.disabled = false;
+      renderResultsPanel();
+    }).catch(function(e){
+      draft.aiStatus = 'error';
+      var code = e && e.code;
+      var msg = 'ИИ-оценка недоступна сейчас. Заполните оценки вручную — введённые данные не потеряны.';
+      if(code === 'rate_limited') msg = 'Превышен лимит обращений к ИИ. Попробуйте позже или заполните оценки вручную.';
+      if(code === 'not_granted') msg = 'Использование ИИ не разрешено для этого просмотра. Заполните оценки вручную.';
+      if(code === 'images_unavailable') msg = 'Приложенные изображения нельзя передать ИИ в этом окне. Заполните оценки вручную или уберите вложения.';
+      if(code === 'image_rejected') msg = 'ИИ не принял один из загруженных файлов (формат или размер). Проверьте вложения или заполните оценки вручную.';
+      draft.aiError = msg;
+      statusEl.textContent = '';
+      btn.disabled = false;
+      buildManualFinal();
+      renderResultsPanel();
+    });
+  }
+
+  function renderResultsPanel(){
+    var host = document.getElementById('results-panel');
+    if(!draft.final){ host.innerHTML = ''; return; }
+    var errorBanner = draft.aiStatus === 'error' ? '<div class="banner banner-error">'+esc(draft.aiError)+'</div>' : '';
+    host.innerHTML =
+      errorBanner +
+      '<div class="card panel">' +
+        '<div class="section-title"><span class="idx">3</span>Оценка по разделам' + (draft.ai ? ' <span class="ai-tag" style="margin-left:6px;">предложено ИИ, доступно для правки</span>' : '') + '</div>' +
+        CRITERIA.map(renderCriterionBlock).join('') +
+        '<label class="field" style="margin-top:6px;">Общее заключение' +
+          '<textarea id="final-overall" style="min-height:70px;">'+esc(draft.final.overall)+'</textarea></label>' +
+        '<div class="total-strip">' +
+          '<div><div class="label">Итоговый балл (среднее по применимым разделам)</div></div>' +
+          '<div class="value mono" id="total-score-value">' + fmtTotal() + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card panel" style="display:flex; gap:12px; align-items:center;">' +
+        '<button class="btn btn-primary" id="btn-save-expertise">Сохранить экспертизу</button>' +
+        '<span style="font-size:12px;color:var(--ink-faint);">При сохранении фиксируются исходное ИИ-заключение и утверждённая экспертом итоговая оценка отдельно.</span>' +
+      '</div>';
+
+    document.getElementById('final-overall').addEventListener('input', function(e){ draft.final.overall = e.target.value; });
+    document.getElementById('btn-save-expertise').addEventListener('click', saveExpertise);
+
+    CRITERIA.forEach(function(c){
+      var sel = document.getElementById('sel-'+c.key);
+      if(sel){
+        sel.addEventListener('change', function(e){
+          draft.final.sections[c.key].score = e.target.value === '' ? null : clampScore(e.target.value);
+          updateBadge(c.key);
+          updateTotal();
+        });
+      }
+      var ta = document.getElementById('com-'+c.key);
+      if(ta){
+        ta.addEventListener('input', function(e){ draft.final.sections[c.key].comment = e.target.value; });
+      }
+      var ca = document.getElementById('cor-'+c.key);
+      if(ca){
+        ca.addEventListener('input', function(e){ draft.final.sections[c.key].correctApproach = e.target.value; });
+      }
+    });
+  }
+
+  function renderCriterionBlock(c){
+    var fs = draft.final.sections[c.key];
+    var applicable = fs.applicable;
+    var aiSec = draft.ai ? draft.ai.sections[c.key] : null;
+    var options = [1,2,3,4,5].map(function(n){
+      return '<option value="'+n+'"'+(fs.score===n?' selected':'')+'>'+n+'</option>';
+    }).join('');
+    var aiSourceHtml = '';
+    if(aiSec && (aiSec.comment || aiSec.correctApproach)){
+      aiSourceHtml = '<div class="ai-source show">' +
+        (aiSec.comment ? '<div><b>Заключение ИИ:</b> '+esc(aiSec.comment)+'</div>' : '') +
+        (aiSec.correctApproach ? '<div style="margin-top:4px;"><b>ИИ — как должно быть:</b> '+esc(aiSec.correctApproach)+'</div>' : '') +
+      '</div>';
+    }
+    return '<div class="criterion">' +
+      '<div class="crit-head">' +
+        '<div><div class="crit-label">'+esc(c.label)+(c.standard?' <span style="font-weight:400;color:var(--ink-faint);font-size:11px;">(сверка со стандартом)</span>':'')+'</div>' +
+        '<div class="crit-hint">'+esc(c.hint)+'</div></div>' +
+        '<span class="badge '+scoreClass(applicable?fs.score:null)+'" id="badge-'+c.key+'">'+(applicable ? (fs.score||'—') : 'неприменимо')+'</span>' +
+      '</div>' +
+      (applicable ?
+        '<div class="score-row"><select id="sel-'+c.key+'"><option value="">—</option>'+options+'</select>' +
+        (aiSec ? '<span class="ai-tag">ИИ: '+ (aiSec.score==null?'—':aiSec.score) +'</span>' : '') + '</div>' +
+        '<label class="field">Замечание — что не так и почему снижен балл' +
+          '<textarea class="comment-box" id="com-'+c.key+'" placeholder="Конкретно, что не соответствует">'+esc(fs.comment)+'</textarea></label>' +
+        '<label class="field" style="margin-top:8px;">Как должно быть правильно' +
+          '<textarea class="comment-box" id="cor-'+c.key+'" placeholder="Конкретно, как нужно было сделать/оформить">'+esc(fs.correctApproach)+'</textarea></label>' +
+        aiSourceHtml
+      : '<div style="font-size:12.5px;color:var(--ink-faint);padding:4px 0;">Раздел неприменим — дистанционная консультация.</div>') +
+    '</div>';
+  }
+
+  function updateBadge(key){
+    var fs = draft.final.sections[key];
+    var badge = document.getElementById('badge-'+key);
+    if(!badge) return;
+    badge.className = 'badge ' + scoreClass(fs.applicable ? fs.score : null);
+    badge.textContent = fs.applicable ? (fs.score || '—') : 'неприменимо';
+  }
+  function computeTotal(){
+    var scores = [];
+    CRITERIA.forEach(function(c){
+      var fs = draft.final.sections[c.key];
+      if(fs.applicable && fs.score != null) scores.push(fs.score);
+    });
+    return avg(scores);
+  }
+  function fmtTotal(){
+    var t = computeTotal();
+    return t == null ? '—' : round1(t).toFixed(1);
+  }
+  function updateTotal(){
+    var elx = document.getElementById('total-score-value');
+    if(elx) elx.textContent = fmtTotal();
+  }
+
+  function saveExpertise(){
+    var missing = CRITERIA.some(function(c){
+      var fs = draft.final.sections[c.key];
+      return fs.applicable && fs.score == null;
+    });
+    if(missing){ toast('Заполните баллы по всем применимым разделам', 'error'); return; }
+    var total = computeTotal();
+    var record = {
+      createdAt: nowIso(),
+      expertName: draft.expertName || '',
+      doctor: draft.doctor,
+      department: draft.department || '',
+      visitDate: draft.visitDate || '',
+      consultationType: draft.consultationType,
+      patientId: draft.patientId || '',
+      standardText: draft.standardText || '',
+      inputs: draft.inputs,
+      ai: draft.ai,
+      final: draft.final,
+      totalScore: total == null ? null : round1(total),
+      doctorResponse: null,
+      attachments: draft.attachments.filter(function(a){ return !a.uploading && a.id; }).map(function(a){
+        return { id: a.id, filename: a.filename, contentType: a.contentType, sizeBytes: a.sizeBytes };
+      }),
+      example: false
+    };
+    var btn = document.getElementById('btn-save-expertise');
+    if(btn) btn.disabled = true;
+    persistExpertise(record).then(function(){
+      toast('Экспертиза сохранена');
+      draft = freshDraft();
+      renderNewView();
+    }).catch(function(){
+      toast('Не удалось сохранить экспертизу', 'error');
+      if(btn) btn.disabled = false;
+    });
+  }
+
+  function persistExpertise(record){
+    if(state.dbReady){
+      return state.db.collection('expertises').add(record);
+    }
+    record._localId = 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    state.expertises.unshift(record);
+    state.expertises.sort(byCreatedDesc);
+    return Promise.resolve();
+  }
+  function byCreatedDesc(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); }
+
+  // ================= JOURNAL VIEW =================
+  var journalFilters = { doctor:'', month:'' };
+
+  function renderJournalView(){
+    var el = document.getElementById('view-journal');
+    el.innerHTML =
+      '<div class="page-head"><div><h1>Журнал экспертиз</h1><div class="desc">Все сохранённые экспертизы приёмов.</div></div></div>' +
+      '<div class="filters-bar">' +
+        '<input type="text" id="jf-doctor" placeholder="Фильтр по врачу">' +
+        '<select id="jf-month"></select>' +
+      '</div>' +
+      '<div id="journal-list"></div>';
+    document.getElementById('jf-doctor').value = journalFilters.doctor;
+    document.getElementById('jf-doctor').addEventListener('input', function(e){
+      journalFilters.doctor = e.target.value; renderJournalList();
+    });
+    populateMonthSelect(document.getElementById('jf-month'), journalFilters.month, true);
+    document.getElementById('jf-month').addEventListener('change', function(e){
+      journalFilters.month = e.target.value; renderJournalList();
+    });
+    renderJournalList();
+  }
+
+  function populateMonthSelect(sel, selected, withAll){
+    var months = {};
+    state.expertises.forEach(function(r){ months[monthKey(r.createdAt)] = true; });
+    var keys = Object.keys(months).sort().reverse();
+    if(!keys.length) keys = [currentMonthKey()];
+    var html = withAll ? '<option value="">Все месяцы</option>' : '';
+    html += keys.map(function(k){ return '<option value="'+k+'"'+(k===selected?' selected':'')+'>'+monthLabel(k)+'</option>'; }).join('');
+    sel.innerHTML = html;
+    if(!withAll && !keys.includes(selected)) sel.value = keys[0];
+  }
+
+  function renderJournalList(){
+    var host = document.getElementById('journal-list');
+    var rows = state.expertises.filter(function(r){
+      var matchDoctor = !journalFilters.doctor || (r.doctor||'').toLowerCase().indexOf(journalFilters.doctor.toLowerCase()) !== -1;
+      var matchMonth = !journalFilters.month || monthKey(r.createdAt) === journalFilters.month;
+      return matchDoctor && matchMonth;
+    });
+    if(!rows.length){
+      host.innerHTML = '<div class="card"><div class="empty-state"><div class="big">&#128203;</div>Экспертизы не найдены.</div></div>';
+      return;
+    }
+    host.innerHTML = '<div class="card table-wrap"><table><thead><tr>' +
+      '<th>Дата</th><th>Врач</th><th>Отделение</th><th>Тип</th><th>Итоговый балл</th><th>Ответ врача</th><th></th>' +
+      '</tr></thead><tbody>' +
+      rows.map(function(r){
+        var rid = r._id || r._localId;
+        return '<tr class="row-click" data-id="'+esc(rid)+'">' +
+          '<td class="mono">'+fmtDate(r.createdAt)+'</td>' +
+          '<td>'+esc(r.doctor)+(r.example?'<span class="example-chip">пример</span>':'')+'</td>' +
+          '<td>'+esc(r.department||'—')+'</td>' +
+          '<td>'+(r.consultationType==='remote'?'Дистанционно':'Очно')+'</td>' +
+          '<td><span class="badge '+scoreClass(r.totalScore)+'">'+(r.totalScore==null?'—':r.totalScore.toFixed(1))+'</span></td>' +
+          '<td>'+(r.doctorResponse ? '<span class="badge '+scoreClass(r.doctorResponse.rating)+'">'+r.doctorResponse.rating+'</span>' : '<span style="font-size:11.5px;color:var(--ink-faint);">нет ответа</span>')+'</td>' +
+          '<td><button class="btn btn-ghost btn-sm" data-del="'+esc(rid)+'">Удалить</button></td>' +
+        '</tr>';
+      }).join('') +
+      '</tbody></table></div>';
+
+    host.querySelectorAll('tr.row-click').forEach(function(tr){
+      tr.addEventListener('click', function(e){
+        if(e.target.closest('button')) return;
+        var rec = findRecord(tr.getAttribute('data-id'));
+        if(rec) openDetailModal(rec);
+      });
+    });
+    host.querySelectorAll('[data-del]').forEach(function(b){
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = b.getAttribute('data-del');
+        confirmModal('Удалить эту экспертизу из журнала? Действие необратимо.', function(){
+          deleteExpertise(id);
+        });
+      });
+    });
+  }
+
+  function findRecord(id){
+    return state.expertises.find(function(r){ return (r._id||r._localId) === id; });
+  }
+  function deleteExpertise(id){
+    if(state.dbReady){
+      state.db.doc('expertises/'+id).delete().then(function(){
+        toast('Экспертиза удалена');
+      }).catch(function(){ toast('Не удалось удалить', 'error'); });
+    } else {
+      state.expertises = state.expertises.filter(function(r){ return r._localId !== id; });
+      toast('Экспертиза удалена');
+      renderJournalList();
+    }
+  }
+
+  function openDetailModal(r){
+    var root = document.getElementById('modal-root');
+    var body = CRITERIA.map(function(c){
+      var fs = r.final.sections[c.key];
+      var aiSec = r.ai ? r.ai.sections[c.key] : null;
+      return '<div class="criterion">' +
+        '<div class="crit-head"><div class="crit-label">'+esc(c.label)+'</div>' +
+        '<span class="badge '+scoreClass(fs.applicable?fs.score:null)+'">'+(fs.applicable?(fs.score||'—'):'неприменимо')+'</span></div>' +
+        (aiSec && (aiSec.comment || aiSec.correctApproach) ? '<div style="font-size:12px;color:var(--ink-faint);margin:4px 0;">ИИ: '+(aiSec.applicable?(aiSec.score==null?'—':aiSec.score):'неприменимо')+
+          (aiSec.comment?' — '+esc(aiSec.comment):'')+(aiSec.correctApproach?' <i>Как должно быть: '+esc(aiSec.correctApproach)+'</i>':'')+'</div>' : '') +
+        (fs.comment ? '<div style="font-size:13px;margin-top:4px;"><b>Замечание эксперта:</b> '+esc(fs.comment)+'</div>' : '') +
+        (fs.correctApproach ? '<div style="font-size:13px;margin-top:4px;color:var(--ink-muted);"><b>Как должно быть:</b> '+esc(fs.correctApproach)+'</div>' : '') +
+      '</div>';
+    }).join('');
+    root.innerHTML = '<div class="modal-overlay" id="modal-overlay">' +
+      '<div class="modal">' +
+        '<div class="modal-head"><div>' +
+          '<h3>'+esc(r.doctor)+(r.example?'<span class="example-chip">пример</span>':'')+'</h3>' +
+          '<div style="font-size:12px;color:var(--ink-faint);margin-top:3px;">'+fmtDateTime(r.createdAt)+' · '+esc(r.department||'—')+' · '+(r.consultationType==='remote'?'Дистанционно':'Очно')+(r.patientId?' · ID '+esc(r.patientId):'')+'</div>' +
+        '</div><button class="modal-close" id="modal-close">&times;</button></div>' +
+        '<div class="modal-body">' +
+          '<div class="total-strip" style="margin-top:0;"><div class="label">Итоговый балл</div><div class="value mono">'+(r.totalScore==null?'—':r.totalScore.toFixed(1))+'</div></div>' +
+          '<div style="margin-top:16px;">' + body + '</div>' +
+          (r.final.overall ? '<div style="margin-top:12px;"><div class="section-title" style="margin-bottom:6px;">Общее заключение</div><div style="font-size:13px;">'+nl2br(r.final.overall)+'</div></div>' : '') +
+          (r.standardText ? '<div style="margin-top:12px;"><div class="section-title" style="margin-bottom:6px;">Стандарт для сверки</div><div style="font-size:12.5px;color:var(--ink-muted);">'+nl2br(r.standardText)+'</div></div>' : '') +
+          (r.attachments && r.attachments.length ? '<div style="margin-top:12px;"><div class="section-title" style="margin-bottom:6px;">Документы приёма</div><div class="attach-list">' +
+            r.attachments.map(function(a){
+              var isImage = a.contentType && a.contentType.indexOf('image/') === 0;
+              var thumb = isImage ? '<img class="attach-thumb" src="'+blobUrl(a.id)+'">' : '<div class="attach-icon">&#128196;</div>';
+              return '<a class="attach-view" href="'+blobUrl(a.id)+'" target="_blank" rel="noopener"><div class="attach-chip">' + thumb +
+                '<div class="attach-meta"><div class="attach-name">'+esc(a.filename)+'</div><div class="attach-size">'+fmtBytes(a.sizeBytes)+'</div></div>' +
+              '</div></a>';
+            }).join('') + '</div></div>' : '') +
+          renderDoctorResponseSection(r) +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-overlay').addEventListener('click', function(e){ if(e.target.id === 'modal-overlay') closeModal(); });
+    var drBtn = document.getElementById('dr-submit');
+    if(drBtn){
+      drBtn.addEventListener('click', function(){
+        var ratingVal = document.getElementById('dr-rating').value;
+        if(!ratingVal){ toast('Выберите оценку', 'error'); return; }
+        var comment = document.getElementById('dr-comment').value.trim();
+        var rid = r._id || r._localId;
+        drBtn.disabled = true;
+        submitDoctorResponse(rid, clampScore(ratingVal), comment).then(function(){
+          r.doctorResponse = { rating: clampScore(ratingVal), comment: comment, respondedAt: nowIso() };
+          toast('Ответ врача сохранён');
+          openDetailModal(r);
+          renderJournalList();
+        }).catch(function(){ toast('Не удалось сохранить ответ', 'error'); drBtn.disabled = false; });
+      });
+    }
+  }
+
+  function renderDoctorResponseSection(r){
+    if(r.doctorResponse){
+      return '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">' +
+        '<div class="section-title" style="margin-bottom:6px;">Ответ врача</div>' +
+        '<div class="total-strip" style="margin-top:0;"><div class="label">Оценка работы эксперта</div><div class="value mono">'+r.doctorResponse.rating+'</div></div>' +
+        (r.doctorResponse.comment ? '<div style="font-size:13px;margin-top:10px;">'+nl2br(r.doctorResponse.comment)+'</div>' : '<div style="font-size:12.5px;color:var(--ink-faint);margin-top:8px;">Врач согласен с оценкой, комментариев не оставлено.</div>') +
+        '<div style="font-size:11.5px;color:var(--ink-faint);margin-top:8px;">Отправлено '+fmtDateTime(r.doctorResponse.respondedAt)+'</div>' +
+      '</div>';
+    }
+    var options = [5,4,3,2,1].map(function(n){ return '<option value="'+n+'">'+n+'</option>'; }).join('');
+    return '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">' +
+      '<div class="section-title" style="margin-bottom:6px;">Ответ врача</div>' +
+      '<div style="font-size:12.5px;color:var(--ink-muted);margin-bottom:10px;">Если врач, которому проведена эта экспертиза, не согласен с оценкой — здесь он оценивает работу эксперта и указывает, с чем именно не согласен.</div>' +
+      '<label class="field">Оценка работы эксперта<select id="dr-rating" style="max-width:140px;"><option value="">—</option>'+options+'</select></label>' +
+      '<label class="field" style="margin-top:10px;">С чем не согласны (если есть)<textarea id="dr-comment" style="min-height:64px;" placeholder="Например: по разделу «Код МКБ-10» не согласен, так как..."></textarea></label>' +
+      '<div style="margin-top:10px;"><button class="btn btn-primary btn-sm" id="dr-submit">Отправить ответ</button></div>' +
+    '</div>';
+  }
+
+  function submitDoctorResponse(id, rating, comment){
+    var payload = { rating: rating, comment: comment, respondedAt: nowIso() };
+    if(state.dbReady){
+      return state.db.doc('expertises/'+id).update({ doctorResponse: payload });
+    }
+    return Promise.resolve();
+  }
+  function closeModal(){ document.getElementById('modal-root').innerHTML = ''; }
+
+  function confirmModal(message, onConfirm){
+    var root = document.getElementById('modal-root');
+    root.innerHTML = '<div class="modal-overlay" id="confirm-overlay">' +
+      '<div class="modal" style="max-width:380px;">' +
+        '<div class="modal-body">' +
+          '<div style="font-size:13.5px; margin-bottom:16px;">'+esc(message)+'</div>' +
+          '<div style="display:flex; gap:10px; justify-content:flex-end;">' +
+            '<button class="btn btn-ghost" id="confirm-cancel">Отмена</button>' +
+            '<button class="btn btn-danger" id="confirm-ok">Удалить</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    document.getElementById('confirm-cancel').addEventListener('click', closeModal);
+    document.getElementById('confirm-overlay').addEventListener('click', function(e){ if(e.target.id === 'confirm-overlay') closeModal(); });
+    document.getElementById('confirm-ok').addEventListener('click', function(){ closeModal(); onConfirm(); });
+  }
+
+  // ================= ANALYTICS VIEW =================
+  var analyticsMonth = null;
+
+  function renderAnalyticsView(){
+    if(!analyticsMonth){
+      var months = {}; state.expertises.forEach(function(r){ months[monthKey(r.createdAt)] = true; });
+      var keys = Object.keys(months).sort().reverse();
+      analyticsMonth = keys.length ? keys[0] : currentMonthKey();
+    }
+    var el = document.getElementById('view-analytics');
+    el.innerHTML =
+      '<div class="page-head"><div><h1>Аналитика</h1><div class="desc">Качество лечебно-диагностической помощи за период.</div></div>' +
+      '<div class="page-head-controls"><select id="an-month"></select></div></div>' +
+      '<div id="analytics-body"></div>';
+    populateMonthSelect(document.getElementById('an-month'), analyticsMonth, false);
+    document.getElementById('an-month').addEventListener('change', function(e){
+      analyticsMonth = e.target.value; renderAnalyticsBody();
+    });
+    renderAnalyticsBody();
+  }
+
+  function recordsForMonth(monthK){
+    return state.expertises.filter(function(r){ return monthKey(r.createdAt) === monthK; });
+  }
+
+  function renderAnalyticsBody(){
+    var host = document.getElementById('analytics-body');
+    var rows = recordsForMonth(analyticsMonth);
+    if(!rows.length){
+      host.innerHTML = '<div class="card"><div class="empty-state"><div class="big">&#128202;</div>За '+monthLabel(analyticsMonth).toLowerCase()+' экспертиз не проведено.</div></div>';
+      return;
+    }
+    var totals = rows.map(function(r){ return r.totalScore; }).filter(function(v){ return v != null; });
+    var avgTotal = avg(totals);
+    var lowCount = 0;
+    var perSection = {}; CRITERIA.forEach(function(c){ perSection[c.key] = []; });
+    var byDoctor = {};
+    rows.forEach(function(r){
+      CRITERIA.forEach(function(c){
+        var fs = r.final.sections[c.key];
+        if(fs.applicable && fs.score != null){
+          perSection[c.key].push(fs.score);
+          if(fs.score <= LOW_THRESHOLD) lowCount++;
+        }
+      });
+      if(!byDoctor[r.doctor]) byDoctor[r.doctor] = { count:0, scores:[], sectionScores:{} };
+      byDoctor[r.doctor].count++;
+      if(r.totalScore != null) byDoctor[r.doctor].scores.push(r.totalScore);
+      CRITERIA.forEach(function(c){
+        var fs = r.final.sections[c.key];
+        if(fs.applicable && fs.score != null){
+          if(!byDoctor[r.doctor].sectionScores[c.key]) byDoctor[r.doctor].sectionScores[c.key] = [];
+          byDoctor[r.doctor].sectionScores[c.key].push(fs.score);
+        }
+      });
+    });
+
+    var barsHtml = CRITERIA.map(function(c){
+      var a = avg(perSection[c.key]);
+      var pct = a == null ? 0 : (a/5*100);
+      return '<div class="bar-row"><div class="bar-label">'+esc(c.label)+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct.toFixed(1)+'%;"></div></div>' +
+        '<div class="bar-val mono">'+(a==null?'—':round1(a).toFixed(1))+'</div></div>';
+    }).join('');
+
+    var doctorRows = Object.keys(byDoctor).sort().map(function(name){
+      var d = byDoctor[name];
+      var davg = avg(d.scores);
+      var weakest = null, weakestAvg = 99;
+      CRITERIA.forEach(function(c){
+        var arr = d.sectionScores[c.key];
+        if(arr && arr.length){
+          var a = avg(arr);
+          if(a < weakestAvg){ weakestAvg = a; weakest = c.label; }
+        }
+      });
+      return '<tr><td>'+esc(name)+'</td><td class="mono">'+d.count+'</td>' +
+        '<td><span class="badge '+scoreClass(davg)+'">'+(davg==null?'—':round1(davg).toFixed(1))+'</span></td>' +
+        '<td>'+(weakest?esc(weakest)+' <span class="mono" style="color:var(--ink-faint);">('+round1(weakestAvg).toFixed(1)+')</span>':'—')+'</td></tr>';
+    }).join('');
+
+    host.innerHTML =
+      '<div class="kpi-row">' +
+        '<div class="card kpi"><div class="kpi-label">Проведено экспертиз</div><div class="kpi-value">'+rows.length+'</div><div class="kpi-sub">'+monthLabel(analyticsMonth)+'</div></div>' +
+        '<div class="card kpi"><div class="kpi-label">Средний итоговый балл</div><div class="kpi-value">'+(avgTotal==null?'—':round1(avgTotal).toFixed(1))+'</div><div class="kpi-sub">по всем экспертизам периода</div></div>' +
+        '<div class="card kpi"><div class="kpi-label">Замечания (балл &le; '+LOW_THRESHOLD+')</div><div class="kpi-value">'+lowCount+'</div><div class="kpi-sub">по отдельным разделам</div></div>' +
+      '</div>' +
+      '<div class="card panel">' +
+        '<div class="section-title">Средний балл по разделам оценочного листа</div>' +
+        '<div class="bar-scale"><div></div><div class="bar-scale-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div><div></div></div>' +
+        '<div class="bars">'+barsHtml+'</div>' +
+      '</div>' +
+      '<div class="card panel">' +
+        '<div class="section-title">По врачам</div>' +
+        '<div class="table-wrap"><table><thead><tr><th>Врач</th><th>Экспертиз</th><th>Средний балл</th><th>Наиболее слабый раздел</th></tr></thead><tbody>'+doctorRows+'</tbody></table></div>' +
+      '</div>';
+  }
+
+  // ================= RECOMMENDATIONS VIEW =================
+  var recPeriod = null;
+  var draftRec = null;
+
+  function renderRecommendationsView(){
+    if(!recPeriod){
+      var months = {}; state.expertises.forEach(function(r){ months[monthKey(r.createdAt)] = true; });
+      var keys = Object.keys(months).sort().reverse();
+      recPeriod = keys.length ? keys[0] : currentMonthKey();
+    }
+    var el = document.getElementById('view-recommendations');
+    el.innerHTML =
+      '<div class="page-head"><div><h1>Рекомендации</h1><div class="desc">Сводные рекомендации по итогам месяца на основе всех экспертиз периода.</div></div>' +
+      '<div class="page-head-controls"><select id="rec-month"></select>' +
+      '<button class="btn btn-primary" id="btn-gen-rec">Сформировать рекомендации с ИИ</button></div></div>' +
+      (state.sampleReady ? '' : '<div class="banner banner-warn">ИИ недоступен в этом окне — автоматическое формирование сводки невозможно.</div>') +
+      '<div id="rec-draft"></div>' +
+      '<div class="card panel"><div class="section-title">Архив рекомендаций</div><div id="rec-archive"></div></div>';
+    populateMonthSelect(document.getElementById('rec-month'), recPeriod, false);
+    document.getElementById('rec-month').addEventListener('change', function(e){ recPeriod = e.target.value; draftRec = null; renderRecDraft(); });
+    document.getElementById('btn-gen-rec').addEventListener('click', generateRecommendations);
+    renderRecDraft();
+    renderRecArchive();
+  }
+
+  function buildRecPrompt(rows){
+    var byDoctor = {};
+    rows.forEach(function(r){
+      if(!byDoctor[r.doctor]) byDoctor[r.doctor] = [];
+      var low = [];
+      CRITERIA.forEach(function(c){
+        var fs = r.final.sections[c.key];
+        if(fs.applicable && fs.score != null && fs.score <= PROBLEM_AVG_THRESHOLD - 1){
+          low.push(c.label + '=' + fs.score + (fs.comment ? ' ("'+fs.comment+'")' : ''));
+        }
+      });
+      byDoctor[r.doctor].push('приём '+fmtDate(r.createdAt)+', итог '+(r.totalScore==null?'—':r.totalScore)+ (low.length ? '; замечания: '+low.join('; ') : '; замечаний нет'));
+    });
+    var lines = [];
+    lines.push('Ты — ассистент руководителя клинического аудита медицинской организации. На основе сводных данных экспертиз амбулаторных приёмов за месяц сформируй сводные рекомендации.');
+    lines.push('Период: ' + monthLabel(recPeriod) + '. Всего экспертиз: ' + rows.length + '.');
+    lines.push('');
+    lines.push('ДАННЫЕ ПО ВРАЧАМ:');
+    Object.keys(byDoctor).forEach(function(name){
+      lines.push('- ' + name + ': ' + byDoctor[name].join(' | '));
+    });
+    lines.push('');
+    lines.push('ЗАДАЧА:');
+    lines.push('1. Резюме качества помощи за период (2-4 предложения).');
+    lines.push('2. Рекомендации по врачам — включай врача В ЭТОТ СПИСОК ТОЛЬКО если по его приёмам выявлены реальные проблемы (средний балл ниже 4 хотя бы по одному разделу или повторяющиеся замечания). Не включай врачей без проблем.');
+    lines.push('3. Предложения по обновлению или уточнению клинических рекомендаций/протоколов организации, если замечания на это указывают.');
+    lines.push('4. Предложения по выработке единого подхода среди врачей, если видны расхождения в практике.');
+    lines.push('Тон — деловой и доброжелательный, на русском языке. Формулировки конкретные и адресные, без общих фраз.');
+    lines.push('');
+    lines.push('Ответь ТОЛЬКО JSON:');
+    lines.push('{"summary":"...","byDoctor":[{"doctor":"...","note":"..."}],"protocolSuggestions":["..."],"unifiedApproachSuggestions":["..."]}');
+    lines.push('Если проблемных врачей нет, верни "byDoctor": [].');
+    return lines.join('\n');
+  }
+
+  function generateRecommendations(){
+    var rows = recordsForMonth(recPeriod);
+    if(!rows.length){ toast('Нет экспертиз за выбранный период', 'error'); return; }
+    if(!state.sampleReady){ toast('ИИ недоступен в этом окне', 'error'); return; }
+    var btn = document.getElementById('btn-gen-rec');
+    btn.disabled = true;
+    var host = document.getElementById('rec-draft');
+    host.innerHTML = '<div class="card panel"><span class="spinner" style="display:inline-block;vertical-align:-2px;"></span> Формирование сводных рекомендаций — может занять до двух минут…</div>';
+    state.sample.json(buildRecPrompt(rows), { modelTier: 'complex', cache: false }).then(function(data){
+      var totals = rows.map(function(r){ return r.totalScore; }).filter(function(v){ return v != null; });
+      draftRec = {
+        period: recPeriod,
+        expertiseCount: rows.length,
+        avgScore: avg(totals),
+        summary: (data && data.summary) || '',
+        byDoctor: (data && Array.isArray(data.byDoctor)) ? data.byDoctor.map(function(d){ return { doctor: d.doctor||'', note: d.note||'' }; }) : [],
+        protocolSuggestions: (data && Array.isArray(data.protocolSuggestions)) ? data.protocolSuggestions : [],
+        unifiedApproachSuggestions: (data && Array.isArray(data.unifiedApproachSuggestions)) ? data.unifiedApproachSuggestions : []
+      };
+      btn.disabled = false;
+      renderRecDraft();
+    }).catch(function(e){
+      btn.disabled = false;
+      host.innerHTML = '<div class="banner banner-error">Не удалось сформировать рекомендации. Попробуйте ещё раз позже.</div>';
+    });
+  }
+
+  function renderRecDraft(){
+    var host = document.getElementById('rec-draft');
+    if(!draftRec || draftRec.period !== recPeriod){ host.innerHTML = ''; return; }
+    host.innerHTML = '<div class="card panel">' +
+      '<div class="section-title">Черновик — '+monthLabel(draftRec.period)+' <span style="font-weight:400;color:var(--ink-faint);font-size:12px;">('+draftRec.expertiseCount+' экспертиз, средний балл '+(draftRec.avgScore==null?'—':round1(draftRec.avgScore).toFixed(1))+')</span></div>' +
+      '<label class="field">Резюме<textarea id="rec-summary" style="min-height:70px;">'+esc(draftRec.summary)+'</textarea></label>' +
+      '<label class="field" style="margin-top:12px;">Рекомендации по врачам <span style="font-weight:400;color:var(--ink-faint);">(одна строка на врача, формат "Врач — рекомендация")</span>' +
+        '<textarea id="rec-bydoctor" style="min-height:70px;">'+esc(draftRec.byDoctor.map(function(d){ return d.doctor+' — '+d.note; }).join('\n'))+'</textarea></label>' +
+      '<label class="field" style="margin-top:12px;">Предложения по клиническим рекомендациям/протоколам <span style="font-weight:400;color:var(--ink-faint);">(по одному на строку)</span>' +
+        '<textarea id="rec-protocol" style="min-height:60px;">'+esc(draftRec.protocolSuggestions.join('\n'))+'</textarea></label>' +
+      '<label class="field" style="margin-top:12px;">Единый подход среди врачей <span style="font-weight:400;color:var(--ink-faint);">(по одному на строку)</span>' +
+        '<textarea id="rec-unified" style="min-height:60px;">'+esc(draftRec.unifiedApproachSuggestions.join('\n'))+'</textarea></label>' +
+      '<div style="margin-top:14px;"><button class="btn btn-primary" id="btn-save-rec">Утвердить и сохранить в архив</button></div>' +
+    '</div>';
+    document.getElementById('btn-save-rec').addEventListener('click', saveRecommendations);
+  }
+
+  function saveRecommendations(){
+    var summary = document.getElementById('rec-summary').value.trim();
+    var byDoctorLines = document.getElementById('rec-bydoctor').value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    var byDoctor = byDoctorLines.map(function(line){
+      var idx = line.indexOf(' — ');
+      if(idx === -1) return { doctor: line, note: '' };
+      return { doctor: line.slice(0,idx).trim(), note: line.slice(idx+3).trim() };
+    });
+    var protocolSuggestions = document.getElementById('rec-protocol').value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    var unifiedApproachSuggestions = document.getElementById('rec-unified').value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    var record = {
+      period: draftRec.period,
+      createdAt: nowIso(),
+      author: draft.expertName || '',
+      expertiseCount: draftRec.expertiseCount,
+      avgScore: draftRec.avgScore == null ? null : round1(draftRec.avgScore),
+      summary: summary, byDoctor: byDoctor, protocolSuggestions: protocolSuggestions, unifiedApproachSuggestions: unifiedApproachSuggestions,
+      example: false
+    };
+    var btn = document.getElementById('btn-save-rec');
+    btn.disabled = true;
+    persistRecommendation(record).then(function(){
+      toast('Рекомендации сохранены в архив');
+      draftRec = null;
+      renderRecDraft();
+      renderRecArchive();
+    }).catch(function(){ toast('Не удалось сохранить', 'error'); btn.disabled = false; });
+  }
+  function persistRecommendation(record){
+    if(state.dbReady){ return state.db.collection('recommendations').add(record); }
+    record._localId = 'local-r-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    state.recommendations.unshift(record);
+    state.recommendations.sort(function(a,b){ return (b.period||'').localeCompare(a.period||''); });
+    return Promise.resolve();
+  }
+
+  function renderRecArchive(){
+    var host = document.getElementById('rec-archive');
+    var list = state.recommendations.slice().sort(function(a,b){ return (b.period||'').localeCompare(a.period||'') || (b.createdAt||'').localeCompare(a.createdAt||''); });
+    if(!list.length){ host.innerHTML = '<div class="empty-state"><div class="big">&#128161;</div>Архив пуст.</div>'; return; }
+    host.innerHTML = '<div class="rec-list">' + list.map(function(r, i){
+      var id = r._id || r._localId || ('idx'+i);
+      return '<div class="rec-item" data-idx="'+i+'">' +
+        '<div class="rec-head"><span>'+monthLabel(r.period)+(r.example?'<span class="example-chip">пример</span>':'')+'</span><span class="mono" style="font-weight:500;color:var(--ink-muted);">'+(r.avgScore==null?'—':r.avgScore.toFixed(1))+'</span></div>' +
+        '<div class="rec-meta">'+r.expertiseCount+' экспертиз · утверждено '+fmtDate(r.createdAt)+(r.author?' · '+esc(r.author):'')+'</div>' +
+        '<div class="rec-detail" id="rec-detail-'+i+'">' +
+          (r.summary ? '<h4>Резюме</h4><div>'+nl2br(r.summary)+'</div>' : '') +
+          (r.byDoctor && r.byDoctor.length ? '<h4>По врачам</h4>' + r.byDoctor.map(function(d){ return '<div class="doctor-note"><b>'+esc(d.doctor)+'</b><br>'+esc(d.note)+'</div>'; }).join('') : '') +
+          (r.protocolSuggestions && r.protocolSuggestions.length ? '<h4>Клинические рекомендации/протоколы</h4><ul>'+r.protocolSuggestions.map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>' : '') +
+          (r.unifiedApproachSuggestions && r.unifiedApproachSuggestions.length ? '<h4>Единый подход</h4><ul>'+r.unifiedApproachSuggestions.map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+    host.querySelectorAll('.rec-item').forEach(function(item){
+      item.addEventListener('click', function(){
+        var d = item.querySelector('.rec-detail');
+        d.classList.toggle('show');
+      });
+    });
+  }
+
+  // ================= DB WIRING =================
+  function wireExpertisesSubscription(){
+    state.db.collection('expertises').orderBy('createdAt','desc').limit(500).onSnapshot(function(snap){
+      state.expertises = snap.docs.map(function(d){ var data = d.data(); data._id = d.id; return data; });
+      if(state.view === 'journal') renderJournalList();
+      if(state.view === 'analytics') renderAnalyticsBody();
+    }, function(err){ console.error('expertises snapshot error', err); });
+  }
+  function wireRecommendationsSubscription(){
+    state.db.collection('recommendations').orderBy('period','desc').limit(200).onSnapshot(function(snap){
+      state.recommendations = snap.docs.map(function(d){ var data = d.data(); data._id = d.id; return data; });
+      if(state.view === 'recommendations') renderRecArchive();
+    }, function(err){ console.error('recommendations snapshot error', err); });
+  }
+
+  // ================= SEED DATA =================
+  function seedRecords(){
+    function sec(score, comment, applicable, correctApproach){ return { score: applicable === false ? null : score, comment: comment || '', correctApproach: correctApproach || '', applicable: applicable !== false }; }
+    function mk(o){
+      var sections = {};
+      CRITERIA.forEach(function(c){ sections[c.key] = o.sections[c.key]; });
+      var scores = CRITERIA.map(function(c){ return sections[c.key]; }).filter(function(s){ return s.applicable && s.score != null; }).map(function(s){ return s.score; });
+      var total = round1(avg(scores));
+      return {
+        createdAt: o.createdAt, expertName: o.expertName, doctor: o.doctor, department: o.department,
+        visitDate: o.visitDate, consultationType: o.consultationType, patientId: o.patientId,
+        standardText: o.standardText || '', inputs: o.inputs || {},
+        ai: o.ai || null,
+        final: { sections: sections, overall: o.overall },
+        totalScore: total, doctorResponse: o.doctorResponse || null, example: true
+      };
+    }
+    var e1 = mk({
+      createdAt:'2026-09-10T09:20:00.000Z', expertName:'Турсунова А.', doctor:'Ахметова С.К.', department:'Терапия',
+      visitDate:'2026-09-10', consultationType:'in_person', patientId:'K-10452',
+      inputs:{ anamnesis:'Жалобы на кашель, насморк 3 дня, температура до 37.8. Контакт с ОРВИ в семье.', exam:'Зев гиперемирован, дыхание везикулярное, хрипов нет. Т 37.4.', diagnosis:'ОРВИ, острый ринофарингит. Код МКБ-10: J06.9.', diagnosticsVolume:'ОАК не назначен — клинически не требовался.', treatmentVolume:'Симптоматическая терапия, обильное питьё.', doctorRecommendations:'Повторный визит при сохранении температуры более 3 дней.' },
+      overall:'Приём оформлен полно и последовательно, объём диагностики и лечения соответствует клинической картине нетяжёлой ОРВИ.',
+      sections:{ anamnesis:sec(5), exam:sec(5), diagnosis:sec(5), diagnosticsVolume:sec(5,'Объём обоснован тяжестью состояния.'), treatmentVolume:sec(5), doctorRecommendations:sec(4,'Дана только общая формулировка срока повторного визита без конкретной даты или условия.', true, 'Указать конкретное условие или дату: например, "при сохранении температуры выше 37.5° более 3 дней — повторный очный визит".') }
+    });
+    var e2 = mk({
+      createdAt:'2026-09-12T13:05:00.000Z', expertName:'Турсунова А.', doctor:'Ахметова С.К.', department:'Терапия',
+      visitDate:'2026-09-12', consultationType:'remote', patientId:'K-10488',
+      inputs:{ anamnesis:'Повышение АД до 150/95 в течение недели, головная боль.', exam:'', diagnosis:'Артериальная гипертензия, впервые выявленная. Код МКБ-10: I10.', diagnosticsVolume:'Назначен только контроль АД дома, лабораторное обследование не назначено.', treatmentVolume:'Рекомендован эналаприл 5 мг.', doctorRecommendations:'Очный визит через неделю.' },
+      overall:'Диагноз и лечение в целом обоснованы, но объём первичного обследования при впервые выявленной гипертензии не соответствует стандарту — не назначены базовые анализы и ЭКГ.',
+      sections:{ anamnesis:sec(4), exam:sec(null,'',false), diagnosis:sec(4,'Диагноз сформулирован кратко, без указания степени АГ и риска сердечно-сосудистых осложнений; код I10 соответствует диагнозу.', true, 'Указывать степень АГ и стадию/риск ССО по классификации, например: "Артериальная гипертензия 2 степени, риск 2".'), diagnosticsVolume:sec(3,'При впервые выявленной АГ обследование ограничилось только контролем АД дома — не назначены базовые лабораторные анализы и ЭКГ.', true, 'Назначить ОАК, ОАМ, биохимию (креатинин, глюкоза, липидный профиль) и ЭКГ на первом визите — согласно приложенному протоколу МЗ РК.'), treatmentVolume:sec(4,'Указана стартовая доза, но не указаны целевой уровень АД и срок, через который оценивать эффект терапии.', true, 'Дописать в план: целевое АД < 140/90 и повторная оценка через 2-4 недели с возможной коррекцией дозы.'), doctorRecommendations:sec(5) },
+      standardText:'Протокол МЗ РК: при впервые выявленной АГ — ОАК, ОАМ, биохимия (креатинин, глюкоза, липиды), ЭКГ на первом визите.'
+    });
+    var e3 = mk({
+      createdAt:'2026-09-08T10:40:00.000Z', expertName:'Турсунова А.', doctor:'Ким Р.В.', department:'Кардиология',
+      visitDate:'2026-09-08', consultationType:'in_person', patientId:'K-10310',
+      inputs:{ anamnesis:'АГ в анамнезе 5 лет, принимает лозартан нерегулярно.', exam:'АД 160/100, тоны сердца ритмичные, ЧСС 78.', diagnosis:'Гипертоническая болезнь II ст. Код МКБ-10: I11.', diagnosticsVolume:'ЭхоКГ в динамике, липидограмма.', treatmentVolume:'Коррекция терапии, добавлен амлодипин.', doctorRecommendations:'Контроль АД, приём через месяц.' },
+      overall:'Ведение пациента в целом обосновано; выявлено несоответствие кода МКБ-10 формулировке диагноза, эксперт уточнил код после дополнительной проверки.',
+      doctorResponse: { rating: 4, comment: 'Согласен с замечанием по объёму лечения — действительно не указал причину смены терапии, поправлю в шаблоне записи. По коду МКБ-10 не совсем согласен: данные ЭхоКГ, подтверждающие гипертрофию ЛЖ, были в амбулаторной карте на момент приёма, я просто не продублировал их в тексте осмотра. Код был выставлен обоснованно.', respondedAt:'2026-09-09T08:30:00.000Z' },
+      ai:{ sections:{ anamnesis:sec(5), exam:sec(5), diagnosis:sec(3,'Диагноз "Гипертоническая болезнь II ст." сформулирован без указания риска ССО; указанный код МКБ-10 I11 (с поражением сердца) не подтверждён данными в тексте осмотра — нет ЭхоКГ/ЭКГ с признаками поражения сердца.', true, 'Дополнить формулировку диагноза указанием риска (например, "риск 3"); указанный код I11 подтвердить данными в тексте осмотра (ЭхоКГ с гипертрофией ЛЖ) либо использовать I10 до их получения.'), diagnosticsVolume:sec(4), treatmentVolume:sec(3,'Смена терапии на амлодипин не сопровождается указанием причины неэффективности предыдущей схемы на лозартане.', true, 'Указать в дневнике причину смены терапии (неэффективность/непереносимость) и ожидаемый эффект от нового препарата.'), doctorRecommendations:sec(4) }, overall:'Ведение в целом обосновано, но код МКБ-10 не подтверждён данными осмотра, а коррекция терапии не аргументирована.' },
+      sections:{ anamnesis:sec(5), exam:sec(5), diagnosis:sec(4,'Код I11 подтверждён по данным ЭхоКГ (гипертрофия ЛЖ), которые есть в амбулаторной карте, но не были перенесены в текст осмотра — формально по записи приёма код было невозможно проверить; формулировку диагноза также стоит дополнить указанием риска ССО.', true, 'Эксперт: при следующих приёмах переносить в дневник осмотра конкретную ссылку на данные ЭхоКГ/ЭКГ, подтверждающие код с поражением органа-мишени, и указывать риск ССО в формулировке диагноза.'), diagnosticsVolume:sec(4), treatmentVolume:sec(3,'Смена терапии на амлодипин не сопровождается указанием причины неэффективности предыдущей схемы на лозартане.', true, 'Указывать в дневнике причину смены терапии (неэффективность/непереносимость) и ожидаемый эффект от нового препарата.'), doctorRecommendations:sec(4) }
+    });
+    var e4 = mk({
+      createdAt:'2026-08-22T11:15:00.000Z', expertName:'Турсунова А.', doctor:'Ким Р.В.', department:'Кардиология',
+      visitDate:'2026-08-22', consultationType:'in_person', patientId:'K-09901',
+      inputs:{ anamnesis:'Плановый контроль ИБС, стенокардия напряжения ФК II.', exam:'Состояние стабильное, АД 130/85.', diagnosis:'ИБС, стабильная стенокардия напряжения ФК II. Код МКБ-10: I20.8.', diagnosticsVolume:'ЭКГ, липидограмма в динамике.', treatmentVolume:'Терапия без изменений, статины, бета-блокатор.', doctorRecommendations:'Плановый визит через 3 месяца.' },
+      overall:'Плановый контрольный приём оформлен полно, объём наблюдения соответствует стандарту ведения стабильной ИБС.',
+      sections:{ anamnesis:sec(5), exam:sec(5), diagnosis:sec(4,'Код I20.8 указан без уточнения функционального класса стенокардии, который есть в диагнозе.', true, 'Указывать в коде/диагнозе конкретную форму — например, "I20.8, стабильная стенокардия напряжения ФК II" — для единообразия формулировки диагноза и кода.'), diagnosticsVolume:sec(5), treatmentVolume:sec(5), doctorRecommendations:sec(5) }
+    });
+    var e5 = mk({
+      createdAt:'2026-08-18T09:00:00.000Z', expertName:'Турсунова А.', doctor:'Ахметова С.К.', department:'Терапия',
+      visitDate:'2026-08-18', consultationType:'in_person', patientId:'K-09877',
+      inputs:{ anamnesis:'Боли в пояснице после физической нагрузки, 2 дня.', exam:'Напряжение паравертебральных мышц, неврологической симптоматики нет.', diagnosis:'Дорсалгия, мышечно-тонический синдром. Код МКБ-10: M54.5.', diagnosticsVolume:'Рентгенография не показана при отсутствии красных флагов.', treatmentVolume:'НПВС коротким курсом, миорелаксант.', doctorRecommendations:'ЛФК, режим, повтор при сохранении болей более 2 недель.' },
+      overall:'Приём соответствует общепринятому подходу к острой неспецифической боли в спине, избыточная визуализация обоснованно не назначена.',
+      sections:{ anamnesis:sec(4,'Не уточнена связь боли с конкретным движением или нагрузкой.', true, 'Указывать провоцирующий фактор боли (наклон, подъём тяжести и т.д.) — это часть дифференциальной диагностики механической дорсалгии.'), exam:sec(5), diagnosis:sec(5), diagnosticsVolume:sec(5), treatmentVolume:sec(4,'Указано "коротким курсом" без конкретной длительности приёма НПВС.', true, 'Указывать конкретную длительность курса, например "НПВС 5-7 дней", вместо общей формулировки.'), doctorRecommendations:sec(5) }
+    });
+    var rec1 = {
+      period:'2026-08', createdAt:'2026-09-01T08:00:00.000Z', author:'Турсунова А.', expertiseCount:2, avgScore:4.5,
+      summary:'За август 2026 проведено 2 экспертизы. Средний балл 4.5 — качество документации высокое, значимых системных проблем не выявлено.',
+      byDoctor:[],
+      protocolSuggestions:['Зафиксировать в внутреннем протоколе примерный перечень «красных флагов», исключающих необходимость визуализации при дорсалгии — для единообразия обоснования отказа от рентгенографии.'],
+      unifiedApproachSuggestions:['Договориться о единой формулировке кода МКБ-10 для стабильной стенокардии напряжения (уточнение функционального класса в диагнозе).'],
+      example:true
+    };
+    return { expertises:[e1,e2,e3,e4,e5], recommendations:[rec1] };
+  }
+
+  function maybeSeed(){
+    var seedDoc = state.db.doc('meta/seed');
+    seedDoc.get().then(function(snap){
+      if(snap.exists) return;
+      return seedDoc.acquire({ holder: holderId, ttlMs: 20000, data:{ seeding:true } }).then(function(lease){
+        if(!lease.acquired) return;
+        return state.db.collection('expertises').limit(1).get().then(function(existing){
+          if(!existing.empty) return seedDoc.set({ seeded:true, at: nowIso() });
+          var data = seedRecords();
+          var chain = Promise.resolve();
+          data.expertises.forEach(function(r){ chain = chain.then(function(){ return state.db.collection('expertises').add(r); }); });
+          data.recommendations.forEach(function(r){ chain = chain.then(function(){ return state.db.collection('recommendations').add(r); }); });
+          return chain.then(function(){ return seedDoc.set({ seeded:true, at: nowIso() }); });
+        });
+      });
+    }).catch(function(e){ console.warn('seed skipped', e); });
+  }
+
+  function seedLocalFallback(){
+    var data = seedRecords();
+    data.expertises.forEach(function(r, i){ r._localId = 'seed-e-' + i; });
+    data.recommendations.forEach(function(r, i){ r._localId = 'seed-r-' + i; });
+    state.expertises = data.expertises.slice();
+    state.recommendations = data.recommendations.slice();
+  }
+
+  // ================= INIT =================
+  function init(){
+    setView('new');
+    if(window.claude && window.claude.use){
+      Promise.all([window.claude.use('db'), window.claude.use('sample'), window.claude.use('assets')]).then(function(res){
+        state.db = res[0]; state.sample = res[1]; state.assets = res[2];
+        state.dbReady = !!state.db;
+        state.sampleReady = !!state.sample;
+        state.assetsReady = !!state.assets;
+        if(state.dbReady){
+          wireExpertisesSubscription();
+          wireRecommendationsSubscription();
+          maybeSeed();
+        } else {
+          seedLocalFallback();
+        }
+        if(state.view === 'new') renderNewView();
+      }).catch(function(){
+        seedLocalFallback();
+      });
+    } else {
+      seedLocalFallback();
+    }
+  }
+  init();
+})();
+</script>
